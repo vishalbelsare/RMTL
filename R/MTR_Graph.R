@@ -131,7 +131,7 @@ print.MTR_Graph <- function(x)
 predict.MTR_Graph <- function(m, newdata=NULL)
 {
     if(is.null(newdata))
-        Y <- m$fitted.values
+        y <- m$fitted.values
     else{
         task_num <- length(newdata)
         y <- lapply(c(1:task_num),
