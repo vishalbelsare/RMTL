@@ -137,7 +137,7 @@ print.MTR_Lasso <- function(x)
 predict.MTR_Lasso <- function(m, newdata=NULL)
 {
     if(is.null(newdata))
-        Y <- m$fitted.values
+        y <- m$fitted.values
     else{
         task_num <- length(newdata)
         y <- lapply(c(1:task_num),
