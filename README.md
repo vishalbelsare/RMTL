@@ -10,7 +10,10 @@ Three packages have to be instaled in advanced:‘psych’, ‘corpcor’ and �
 # Installation
 ```R
 #it will take a while
-R CMD check ./
+R CMD check --no-manual --no-examples ./
+#if you want to generate the manual, please install latex and run:
+#R CMD check --no-examples ./
+
 R CMD build ./
 R CMD INSTALL RMTL_1.0.tar.gz
 ```
