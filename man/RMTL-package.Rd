@@ -106,7 +106,7 @@ function.
 #tX, tY: test data
 #W: ground truth
 ####
-load('./RMTL/data/Simulated_Classification_L21.rda')
+data(Simulated_Classification_L21)
 
 #specify the options
 myopt<-list(init = 0, tol = 10^-3, maxIter = 1000)
@@ -127,7 +127,7 @@ predict(m, tX)
 #tX, tY: test data
 #W: ground truth
 ####
-load('./RMTL/data/Simulated_Regression_L21.rda')
+data(Simulated_Regression_L21)
 
 #perform cv and train using the default options
 cv <- cv.MTC_L21(X, Y)
