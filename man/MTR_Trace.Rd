@@ -84,7 +84,7 @@ regularization: Reformulations, algorithms, and multi-task learning. SIAM Journa
 #tX, tY: test data
 #W: ground truth
 ####
-load('./RMTL/data/Simulated_Regression_Trace.rda')
+data(Simulated_Regression_Trace)
 
 #speficy options
 opts=list(init=0,  tol=10^-6, maxIter=10000)

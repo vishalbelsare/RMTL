@@ -67,7 +67,7 @@ lam2=0)
 
 \examples{
 #load the data
-load('./RMTL/data/Simulated_Classification_Graph.rda')
+data(Simulated_Classification_Graph)
 
 #specify the parameters
 lam1=10^seq(2,-5, -0.05)

@@ -148,7 +148,7 @@ Knowledge Discovery in Databases, 633-647.
 #W: ground truth
 #G: the network information
 ####
-load('./RMTL/data/Simulated_Classification_Graph.rda')
+data(Simulated_Classification_Graph)
 
 #specify the parameters
 lam1=10^seq(2,-5, -0.05)

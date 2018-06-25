@@ -65,7 +65,7 @@ maxIter = 1000), stratify = FALSE, nfolds = 5, lam1 = 10^seq(2, -4, -1))
 
 \examples{
 #load the data
-load('./RMTL/data/Simulated_Classification_Trace.rda')
+data(Simulated_Classification_Trace)
 
 #specify parameters
 opts=list(init=0,  tol=10^-6, maxIter=10000)

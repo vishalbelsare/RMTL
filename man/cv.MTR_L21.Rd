@@ -60,7 +60,7 @@ maxIter = 1000), nfolds = 5, lam1 = 10^seq(4, -2, -1))
 
 \examples{
 #load the data
-load('./RMTL/data/Simulated_Regression_L21.rda')
+data(Simulated_Regression_L21)
 
 #speficy options
 opts=list(init=0,  tol=10^-6, maxIter=10000)

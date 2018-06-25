@@ -68,7 +68,7 @@ maxIter = 1000), stratify = FALSE, nfolds = 5, lam1 = 10^seq(1, -4, -1),
 
 \examples{
 #load the data
-load('./RMTL/data/Simulated_Classification_CMTL.rda')
+data(Simulated_Classification_CMTL)
 
 #cross-validation
 cv <- cv.MTC_CMTL(X, Y, k=2)

@@ -86,7 +86,7 @@ lasso. Journal of the Royal Statistical Society. Series B (Methodological), 267-
 #tX, tY: test data
 #W: ground truth
 ####
-load('./RMTL/data/Simulated_Classification_Lasso.rda')
+data(Simulated_Classification_Lasso)
 
 #specify the parameters
 opts=list(init=0,  tol=10^-6, maxIter=10000)

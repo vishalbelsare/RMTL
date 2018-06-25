@@ -97,7 +97,7 @@ processing systems (pp. 745-752).
 #W: ground truth
 #k: a possitive number to modulate the clustered structure
 ####
-load('./RMTL/data/Simulated_Regression_CMTL.rda')
+data(Simulated_Regression_CMTL)
 
 #cross-validation
 cv <- cv.MTR_CMTL(X,Y, k=2)

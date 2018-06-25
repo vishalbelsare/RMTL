@@ -88,7 +88,7 @@ Liu, J., & Ye, J. (2010). Efficient l1/lq norm regularization. arXiv preprint ar
 #tX, tY: test data
 #W: ground truth
 ####
-load('./RMTL/data/Simulated_Regression_L21.rda')
+data(Simulated_Regression_L21)
 
 #speficy options
 opts=list(init=0,  tol=10^-6, maxIter=10000)

@@ -69,7 +69,7 @@ lam2 = 10^seq(3, -2, -1))
 
 \examples{
 #load the data
-load('./RMTL/data/Simulated_Regression_CMTL.rda')
+data(Simulated_Regression_CMTL)
 
 #cross-validation
 cv <- cv.MTR_CMTL(X,Y, k=2)

@@ -63,7 +63,7 @@ maxIter = 1000), nfolds = 5, lam1 = 10^seq(3, -2, -1), lam2 = 0)
 }
 \examples{
 #load the data
-load('./RMTL/data/Simulated_Regression_Graph.rda')
+data(Simulated_Regression_Graph)
 
 #speficy options
 lam1=10^seq(2,-5, -0.05)
