@@ -21,7 +21,7 @@ install_github("transbioZI/RMTL")
 ```
 
 2) Install from the downloaded package
-```R
+```shell
 git clone https://github.com/transbioZI/RMTL.git
 R CMD build ./RMTL/
 R CMD INSTALL RMTL*.tar.gz
