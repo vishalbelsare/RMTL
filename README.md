@@ -35,7 +35,7 @@ R CMD INSTALL RMTL_1.0.tar.gz
 Please check ["RMTL-manuel.pdf"](https://github.com/transbioZI/RMTL/blob/master/RMTL-manual.pdf) for more details.
 
 # Reference
-Cao, Han, et al. "RMTL: An R Library for Multi-Task Learning." Bioinformatics (2018).
+[Cao, Han, et al. "RMTL: An R Library for Multi-Task Learning." Bioinformatics (2018).](https://doi.org/10.1093/bioinformatics/bty831)
 
 
 # Contact
