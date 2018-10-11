@@ -243,15 +243,19 @@ task_num <- length(X)
 X <- lapply(X, function(x) as.matrix(x))
 Y <- lapply(Y, function(x) as.numeric(x))
 
-cvPar <- getCVPartition(X, Y, nfolds, FALSE)
+cvPar <- getCVPartition(Y, nfolds, FALSE)
 cvm <- matrix(0, length(lam1), length(lam2))
 
 #cv
 for (i in 1:nfolds){
-    cv_Xtr <- cvPar[[i]][[1]];
-    cv_Ytr <- cvPar[[i]][[2]];
-    cv_Xte <- cvPar[[i]][[3]];
-    cv_Yte <- cvPar[[i]][[4]];
+    cv_Xtr <- lapply(c(1:task_num),
+                     function(x) X[[x]][cvPar[[i]][[1]][[x]], ])
+    cv_Ytr <- lapply(c(1:task_num),
+                     function(x) Y[[x]][cvPar[[i]][[1]][[x]]])
+    cv_Xte <- lapply(c(1:task_num),
+                     function(x) X[[x]][cvPar[[i]][[2]][[x]], ])
+    cv_Yte <- lapply(c(1:task_num),
+                     function(x) Y[[x]][cvPar[[i]][[2]][[x]]])
 
     
     for (i2 in 1: length(lam2)){
