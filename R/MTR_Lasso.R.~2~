@@ -153,7 +153,7 @@ task_num <- length(X)
 X <- lapply(X, function(x) as.matrix(x))
 Y <- lapply(Y, function(x) as.numeric(x))
 
-cvPar <- getCVPartition(Y, nfolds, FALSE)
+cvPar <- getCVPartition(X, Y, nfolds, FALSE)
 cvm <- rep(0, length(lam1));
 
 #cv

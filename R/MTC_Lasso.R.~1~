@@ -1,30 +1,10 @@
-LR_L21 <- function (X, Y, lam1, lam2, opts){
+LR_Lasso <- function (X, Y, lam1, lam2, opts){
 #------------------------------------------------------------
 # private functions
-unit_grad_eval <- function( w, c, x, y){
-weight <- 1/length(y)
-l <- -y*(x %*% w + c)
-lp <- l
-lp[lp<0] <- 0
-funcVal <- sum(weight * ( log( exp(-lp) +  exp(l-lp) ) + lp ))
-b <- (-weight*y)*(1 - 1/ (1+exp(l)))
-grad_c <- sum(b)
-grad_w <- t(x) %*% b
-return(list(grad_w, grad_c, funcVal))
-}
-
-unit_funcVal_eval <- function ( w, c, x, y){
-weight <- 1/length(y)
-l <- -y*(x %*% w + c)
-lp <- l
-lp[lp<0] <- 0
-return(sum(weight * ( log( exp(-lp) +  exp(l-lp) ) + lp )))
-}
-
-L21_projection <- function (W, lambda ){
-temp <- 1 - lambda/sqrt(rowSums(W^2))
-temp[temp<0] <- 0
-Wp = matrix(rep(temp, dim(W)[2]), nrow=length(temp))*W
+l1_projection <- function (W, lambda ){
+p <- abs(W) - lambda/2
+p[p<0] <- 0
+Wp <- sign(W) * p
 return(Wp)
 }
 
@@ -44,11 +24,33 @@ return(sum(sapply(c(1:task_num),
 }
     
 nonsmooth_eval <- function (W, lam1){
-return(non_smooth_value = sum(sqrt(rowSums(W^2)))*lam1)
+return(lam1*sum(abs(W)))
 }
-#------------------------------------------------------------
 
-#main algorithm
+unit_grad_eval <- function( w, c, x, y){
+#gradient and logistic evaluation for each task
+weight <- 1/length(y)
+l <- -y*(x %*% w + c)
+lp <- l
+lp[lp<0] <- 0
+funcVal <- sum(weight * ( log( exp(-lp) +  exp(l-lp) ) + lp ))
+b <- (-weight*y)*(1 - 1/ (1+exp(l)))
+grad_c <- sum(b)
+grad_w <- t(x) %*% b
+return(list(grad_w, grad_c, funcVal))
+}
+
+unit_funcVal_eval <- function ( w, c, x, y){
+#function value evaluation for each task 
+weight <- 1/length(y)
+l <- -y*(x %*% w + c)
+lp <- l
+lp[lp<0] <- 0
+return(sum(weight * ( log( exp(-lp) +  exp(l-lp) ) + lp )))
+}
+    
+#------------------------------------------------------------
+    
 task_num <- length (X);
 dimension = dim(X[[1]])[2];
 subjects <- dim(X[[1]])[1];
@@ -61,7 +63,7 @@ if(opts$init==0){
 }else if(opts$init==1){
    W0 <- opts$W0
    C0 <- opts$C0
-}    
+}
 
 bFlag <- 0; 
 Wz <- W0;
@@ -90,7 +92,7 @@ while (iter < opts$maxIter){
 
     # the Armijo Goldstein line search scheme
     while (TRUE){
-        Wzp <- L21_projection(Ws - gWs/gamma, lam1 / gamma);
+        Wzp <- l1_projection(Ws - gWs/gamma, 2 * lam1 / gamma);
         Czp <- Cs - gCs/gamma;
         Fzp <- funVal_eval  (Wzp, Czp);
         
@@ -108,7 +110,6 @@ while (iter < opts$maxIter){
             bFlag=1; 
             break;
         }
-        
         if (Fzp <= Fzp_gamma) break else {gamma = gamma * gamma_inc}
   
     }
@@ -117,9 +118,7 @@ while (iter < opts$maxIter){
     Cz_old = Cz;
     Wz = Wzp;
     Cz = Czp;
-    
     Obj = c(Obj, Fzp + nonsmooth_eval(Wz, lam1));
-    
     
     #test stop condition.
     if (bFlag) break;
@@ -127,26 +126,28 @@ while (iter < opts$maxIter){
         if (abs( Obj[length(Obj)] - Obj[length(Obj)-1] ) <= opts$tol)
             break;
     }
-    
     iter = iter + 1;
     t_old = t;
     t = 0.5 * (1 + (1+ 4 * t^2)^0.5);
+}
 
+W = Wzp;
+C = Czp;
+
+return(list(W=W, C=C, Obj=Obj))
 }
 
 
-return(list(W=Wzp, C=Czp, Obj=Obj))
-}
+MTC_Lasso <- function(X, Y, ...) UseMethod("MTC_Lasso")
 
-MTC_L21 <- function(X, Y, ...) UseMethod("MTC_L21")
 
-MTC_L21.default <- function(X, Y, lam1=0.01, lam2=0, 
-             opts=list(init=0, tol=10^-3, maxIter=1000)){
+MTC_Lasso.default <- function(X, Y, lam1=0.01, lam2=0,
+             opts=list(init=0,  tol=10^-3, maxIter=1000)){
     task_num <- length(X)
     X <- lapply(X, function(x) as.matrix(x))
     Y <- lapply(Y, function(x) as.numeric(x))
 
-    r <- LR_L21(X, Y, lam1, lam2, opts)
+    r <- LR_Lasso(X, Y, lam1, lam2, opts)
     fitted <- lapply(c(1:task_num),
         function(x) exp(X[[x]] %*% r$W[,x] + r$C[x]))
     r$fitted.values <- lapply(fitted, function(x) x/(1+x))
@@ -158,11 +159,11 @@ MTC_L21.default <- function(X, Y, lam1=0.01, lam2=0,
     r$opts <- opts
     r$dim <- sapply(X, function(x)dim(x))
     r$features <- colnames(X[[1]])
-    class(r) <- "MTC_L21"
+    class(r) <- "MTC_Lasso"
     return(r)
 }
 
-print.MTC_L21 <- function(x)
+print.MTC_Lasso <- function(x)
 {
 
     cat("\nHead Coefficients:\n")
@@ -170,10 +171,10 @@ print.MTC_L21 <- function(x)
     cat("Call:\n")
     print(x$call)
     cat("Formulation:\n")
-    print('SUM_i Loss_i(W) + lam1*||W||_{2,1} + lam2*||W||{_2}{^2}')
+    print('SUM_i Loss_i(W) + lam1*||W||_1 + lam2*||W||{_2}{^2}')
 }
 
-predict.MTC_L21 <- function(m, newX=NULL)
+predict.MTC_Lasso <- function(m, newX=NULL)
 {
     if(is.null(newX))
         y <- m$fitted.values
@@ -186,50 +187,46 @@ predict.MTC_L21 <- function(m, newX=NULL)
     return(y)
 }
 
-cv.MTC_L21 <- function(X, Y, lam2=0,
+cv.MTC_Lasso <- function(X, Y, lam2=0,
              opts=list(init=0,  tol=10^-3, maxIter=1000),
              stratify=FALSE, nfolds=5,lam1=10^seq(1,-5, -1)){
 task_num <- length(X)
 X <- lapply(X, function(x) as.matrix(x))
 Y <- lapply(Y, function(x) as.numeric(x))
 
-cvPar <- getCVPartition(Y, nfolds, stratify)
-cvm <- rep(0, length(lam1))
+cvPar <- getCVPartition(X, Y, nfolds, stratify)
+cvm <- rep(0, length(lam1));
 
 #cv
 for (i in 1:nfolds){
-    cv_Xtr <- lapply(c(1:task_num),
-                     function(x) X[[x]][cvPar[[i]][[1]][[x]], ])
-    cv_Ytr <- lapply(c(1:task_num),
-                     function(x) Y[[x]][cvPar[[i]][[1]][[x]]])
-    cv_Xte <- lapply(c(1:task_num),
-                     function(x) X[[x]][cvPar[[i]][[2]][[x]], ])
-    cv_Yte <- lapply(c(1:task_num),
-                     function(x) Y[[x]][cvPar[[i]][[2]][[x]]])
+    cv_Xtr <- cvPar[[i]][[1]];
+    cv_Ytr <- cvPar[[i]][[2]];
+    cv_Xte <- cvPar[[i]][[3]];
+    cv_Yte <- cvPar[[i]][[4]];
 
     cv_opt <- opts;
     for (p_idx in 1: length(lam1)){
-        r <- LR_L21(cv_Xtr, cv_Ytr, lam1=lam1[p_idx], lam2=lam2, cv_opt)
-        cv_opt$init <- 1
-        cv_opt$W0 <- r$W
-        cv_opt$C0 <- r$C
+        r <- LR_Lasso(cv_Xtr, cv_Ytr, lam1[p_idx], lam2, cv_opt)
+        cv_opt$init=1;
+        cv_opt$W0=r$W;
+        cv_opt$C0=r$C;
         cv_fitted <- lapply(c(1:task_num),
             function(x) exp(cv_Xte[[x]] %*% r$W[,x] + r$C[x]))
         cv_fitted <- lapply(cv_fitted, function(x) x/(1+x))
         cv_err<-mean(sapply(c(1:task_num),
             function(x) {mean(cv_Yte[[x]]!=(round(cv_fitted[[x]])-0.5)*2)}))
-        cvm[p_idx] <- cvm[p_idx]+cv_err
+        cvm[p_idx] = cvm[p_idx]+cv_err
     }
 }
 cvm = cvm/nfolds
 best_idx <- which(cvm==min(cvm))[1]
 cv <- list(lam1=lam1, lam1.min=lam1[best_idx], lam2=lam2, cvm=cvm)
-class(cv) <- "cv.MTC_L21"
+class(cv) <- "cv.MTC_Lasso"
 return(cv)
 }
 
 
-plot.cv.MTC_L21 <- function(x){
+plot.cv.MTC_Lasso <- function(x){
 plot(log10(x$lam1), x$cvm, xlab="log10(lambda1)",
      ylab="error")
 }
