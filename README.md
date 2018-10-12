@@ -5,7 +5,7 @@ An R Library for Multi-task Learning
 This package provides an efficient implementation of regularized multi-task learning comprising 10 algorithms applicable for regression, classification, joint feature selection, task clustering, low-rank learning, sparse learning and network incorporation. All algorithms are implemented basd on the accelerated gradient descent method and feature a complexity of O(1/k^2). Sparse model structure is induced by the solving the proximal operator.
 
 # Required Packages
-Four packages have to be instaled in advanced to enable all MTL algorithms available: ‘MASS’, ‘psych’, ‘corpcor’ and ‘fields’. You can install them from the CRAN.
+Four packages have to be instaled in advanced to enable functions i.e. eigen-decomposition, 2D plotting: ‘MASS’, ‘psych’, ‘corpcor’ and ‘fields’. You can install them from the CRAN.
 ```R
 install.packages("MASS")
 install.packages("psych")
