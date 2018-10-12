@@ -13,14 +13,14 @@ install.packages("fields")
 ```
 
 # Installation
-1) Install directly from the github
+1) Install directly in R (Recommend)
 ```R
 install.packages("devtools")
 library("devtools")
 install_github("transbioZI/RMTL")
 ```
 
-2) Install from the downloaded package
+2) Install in shell
 ```shell
 git clone https://github.com/transbioZI/RMTL.git
 R CMD build ./RMTL/
